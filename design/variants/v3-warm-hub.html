@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- Hubly design variant 3 / "Warm Hub" — friendly yellow-accent, big radii, social/hub feel (own mark, not HF logo) -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hubly · Variant 3 — Warm Hub</title>
+<style>
+  :root{
+    --bg:#FFFCF3; --surface:#FFFFFF; --ink:#121212; --muted:#7A7466; --line:#F0E7CF;
+    --accent:#FFC400; --accent-ink:#121212; --accent-soft:#FFF3CC; --shadow:0 6px 18px rgba(140,110,0,.10);
+  }
+  *{box-sizing:border-box; -webkit-font-smoothing:antialiased}
+  body{margin:0;background:#EFEDE6;display:flex;align-items:center;justify-content:center;min-height:100vh;
+       font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding:32px}
+  .stage{display:flex;flex-direction:column;gap:12px}
+  .caption{font:700 12px/1 ui-monospace,Menlo,monospace;color:#6B6555;letter-spacing:.08em;text-transform:uppercase}
+  .phone{width:390px;height:844px;background:var(--bg);border-radius:38px;overflow:hidden;
+         box-shadow:0 24px 60px rgba(0,0,0,.16),0 0 0 10px #1b1c1f;display:flex;flex-direction:column;position:relative;color:var(--ink)}
+  .status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:12px;font-weight:700;color:#3B372C}
+  header{padding:6px 18px 10px;display:flex;align-items:center;gap:10px}
+  .mark{width:34px;height:34px;border-radius:12px;background:var(--accent);display:flex;align-items:center;
+        justify-content:center;font:800 16px/1 -apple-system,"Segoe UI",sans-serif;color:var(--accent-ink);
+        box-shadow:var(--shadow);transform:rotate(-6deg)}
+  .brand{font:800 20px/1 -apple-system,"Segoe UI",sans-serif;letter-spacing:-.03em}
+  .brand span{background:var(--accent);padding:1px 5px;border-radius:6px;margin-left:1px}
+  .bell{margin-left:auto;width:34px;height:34px;border-radius:12px;background:var(--surface);border:1.5px solid var(--line);
+        display:flex;align-items:center;justify-content:center;font-size:15px}
+  .bell::after{content:"";position:absolute;width:7px;height:7px;border-radius:9px;background:#FF5A36;margin:-16px -14px 0 0}
+  .search{margin:0 18px 12px;height:44px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;
+          display:flex;align-items:center;gap:9px;padding:0 14px;color:var(--muted);font-size:14px;box-shadow:var(--shadow)}
+  .seg{display:flex;gap:8px;padding:0 18px 10px;overflow:hidden}
+  .seg a{font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:12px;text-decoration:none;color:#6B6555;background:#F6F1E2}
+  .seg a.on{background:var(--ink);color:#FFE9A3}
+  .feed{flex:1;overflow:hidden;padding:0 18px 0;display:flex;flex-direction:column;gap:11px}
+  .card{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);position:relative}
+  .card.hot{background:linear-gradient(180deg,#FFFDF6,var(--surface))}
+  .ribbon{position:absolute;top:-9px;right:12px;background:var(--accent);color:var(--accent-ink);font:800 10px/1 -apple-system,sans-serif;
+          padding:5px 8px;border-radius:8px;letter-spacing:.04em}
+  .repo{font-size:16px;font-weight:800;letter-spacing:-.02em}
+  .repo small{color:var(--muted);font-weight:600;font-size:12.5px}
+  .desc{font-size:13px;line-height:1.5;color:#5A5446;margin:6px 0 11px}
+  .foot{display:flex;align-items:center;gap:8px}
+  .tag{font-size:11px;font-weight:700;color:#7A5C00;background:var(--accent-soft);padding:5px 9px;border-radius:9px}
+  .stat{font-size:11.5px;font-weight:700;color:var(--muted)}
+  .cta{margin-left:auto;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:800;
+       padding:8px 13px;border-radius:12px}
+  .avatars{display:flex;margin:2px 0 0 2px}
+  .avatars i{width:18px;height:18px;border-radius:9px;background:#E7E2D4;border:2px solid #fff;margin-left:-6px;display:block}
+  nav.tabs{height:80px;background:#FFF9E8;border-top:1.5px solid var(--line);display:flex;padding-bottom:14px}
+  nav.tabs div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:10.5px;font-weight:700;color:#8A8272}
+  nav.tabs div.on{color:var(--ink)}
+  nav.tabs div.on .ic{background:var(--accent);border-radius:10px;padding:4px 10px}
+  nav.tabs .ic{font-size:15px;line-height:1;padding:4px 10px}
+  .homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:9px;background:#DED8C6}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="caption">Variant 3 · Warm Hub</div>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>⌁ ▮ ▮</span></div>
+    <header>
+      <div class="mark">H</div>
+      <div class="brand">Hub<span>ly</span></div>
+      <div class="bell">🔔</div>
+    </header>
+    <div class="search">🔍 Try "text-to-speech", "1M context"…</div>
+    <div class="seg"><a class="on" href="#">Models</a><a href="#">Datasets</a><a href="#">Spaces</a><a href="#">Papers</a><a href="#">Blog</a></div>
+    <div class="feed">
+      <div class="card hot">
+        <div class="ribbon">🔥 TRENDING</div>
+        <div class="repo">Qwen3.8-27B <small>· Qwen</small></div>
+        <div class="desc">Dense 27B instruct model with 256K context — strong multilingual reasoning, cheap to serve.</div>
+        <div class="foot"><span class="tag">text-generation</span><span class="stat">↓ 2.4M</span><span class="stat">♡ 18.6k</span><span class="cta">Open</span></div>
+      </div>
+      <div class="card">
+        <div class="repo">FLUX.1-dev <small>· black-forest-labs</small></div>
+        <div class="desc">12B rectified-flow transformer for text-to-image, guidance-distilled for few-step sampling.</div>
+        <div class="foot"><span class="tag">text-to-image</span><span class="stat">↓ 8.1M</span><span class="stat">♡ 42.3k</span><span class="cta">Open</span></div>
+      </div>
+      <div class="card">
+        <div class="repo">DeepSeek-R1 <small>· deepseek-ai</small></div>
+        <div class="desc">Reasoning model trained with large-scale RL; long chain-of-thought with verifiable answers.</div>
+        <div class="foot"><span class="tag">reasoning</span><span class="stat">↓ 12.7M</span><span class="stat">♡ 51.9k</span><span class="cta">Open</span></div>
+      </div>
+      <div class="card">
+        <div class="repo">Kokoro-82M <small>· hexgrad</small></div>
+        <div class="desc">82M-param TTS under Apache-2.0 — a conversation partner vibe, fast enough on CPU.</div>
+        <div class="foot"><span class="tag">text-to-speech</span><span class="stat">↓ 3.9M</span><span class="stat">♡ 9.4k</span>
+          <span class="avatars"><i></i><i></i><i></i></span></div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <div class="on"><span class="ic">▤</span>Repos</div>
+      <div><span class="ic">✦</span>Papers</div>
+      <div><span class="ic">✎</span>Blog</div>
+      <div><span class="ic">♡</span>Saved</div>
+      <div><span class="ic">☺</span>Me</div>
+    </nav>
+    <div class="homebar"></div>
+  </div>
+</div>
+</body>
+</html>

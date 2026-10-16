@@ -1,0 +1,136 @@
+<!doctype html>
+<!-- Hubly design variant 2 / "Dark Lab" — dark, data-dense, monospace metrics, accent indicators -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hubly · Variant 2 — Dark Lab</title>
+<style>
+  :root{
+    --bg:#0A0C0F; --surface:#14181E; --surface2:#191E26; --line:#242A33; --ink:#E9ECF1;
+    --muted:#858E9B; --accent:#35E0C0; --accent2:#7C6BFF; --warn:#FFB84D;
+    --mono:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",monospace;
+  }
+  *{box-sizing:border-box; -webkit-font-smoothing:antialiased}
+  body{margin:0;background:#15171B;display:flex;align-items:center;justify-content:center;min-height:100vh;
+       font-family:-apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif;padding:32px}
+  .stage{display:flex;flex-direction:column;gap:12px}
+  .caption{font:600 12px/1 var(--mono);color:#9AA3AF;letter-spacing:.08em;text-transform:uppercase}
+  .phone{width:390px;height:844px;background:var(--bg);border-radius:38px;overflow:hidden;
+         box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 10px #26282d;display:flex;flex-direction:column;position:relative;color:var(--ink)}
+  .status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font:600 12px/1 var(--mono);color:var(--muted)}
+  header{padding:2px 16px 10px}
+  .brandrow{display:flex;align-items:center;gap:8px}
+  .mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(140deg,var(--accent),var(--accent2));
+        display:flex;align-items:center;justify-content:center;font:800 13px/1 var(--mono);color:#06120F}
+  .brand{font:700 17px/1 var(--mono);letter-spacing:-.02em}
+  .brand b{color:var(--accent)}
+  .pill{margin-left:auto;font:600 10px/1 var(--mono);color:var(--accent);border:1px solid #1E4A44;
+        background:#0F2A26;padding:5px 8px;border-radius:6px}
+  .search{margin-top:12px;height:38px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+          display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--muted);font-size:13.5px}
+  .search kbd{margin-left:auto;font:600 10px/1 var(--mono);color:#6B7480;border:1px solid var(--line);border-radius:4px;padding:3px 5px}
+  .seg{display:flex;gap:6px;padding:12px 16px 6px}
+  .seg a{flex:1;text-align:center;font:600 12px/1 var(--mono);padding:9px 0;border-radius:8px;color:var(--muted);
+         text-decoration:none;background:var(--surface);border:1px solid var(--line)}
+  .seg a.on{color:#06120F;background:var(--accent);border-color:transparent}
+  .feed{flex:1;overflow:hidden;padding:8px 16px 0;display:flex;flex-direction:column;gap:10px}
+  .rowhead{display:flex;align-items:baseline;gap:8px;font:600 11px/1 var(--mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:2px 0 -2px}
+  .rowhead span{margin-left:auto;color:var(--accent)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 13px 11px}
+  .top{display:flex;align-items:center;gap:8px}
+  .repo{font:700 14.5px/1.25 var(--mono)}
+  .repo small{color:var(--muted);font-weight:500}
+  .badge{margin-left:auto;font:600 9.5px/1 var(--mono);color:var(--warn);background:#2A2013;border:1px solid #4A3A1C;
+         padding:4px 6px;border-radius:5px;white-space:nowrap}
+  .desc{font-size:12.5px;line-height:1.45;color:#AAB2BE;margin:7px 0 10px}
+  .metrics{display:flex;gap:6px}
+  .m{background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:600 11px/1 var(--mono)}
+  .m i{color:var(--muted);font-style:normal;font-weight:500}
+  .bars{margin-left:auto;display:flex;align-items:flex-end;gap:2px;height:20px}
+  .bars b{width:3px;background:#2C4A45;border-radius:2px}
+  .bars b.hi{background:var(--accent)}
+  nav.tabs{height:74px;background:#0E1116;border-top:1px solid var(--line);display:flex;padding-bottom:12px;position:relative}
+  nav.tabs div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+               font:600 10px/1 var(--mono);color:#69727E}
+  nav.tabs div.on{color:var(--accent)}
+  nav.tabs .ic{font-size:16px}
+  nav.tabs div.on::before{content:"";position:absolute;top:-1px;width:38px;height:2px;background:var(--accent);border-radius:2px}
+  .homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:9px;background:#2C3138}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="caption">Variant 2 · Dark Lab</div>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>⌁ ▮ ▮</span></div>
+    <header>
+      <div class="brandrow">
+        <div class="mark">H</div>
+        <div class="brand">hub<b>ly</b></div>
+        <div class="pill">● LIVE</div>
+      </div>
+      <div class="search">⌕ models · datasets · spaces <kbd>⌘K</kbd></div>
+    </header>
+    <div class="seg"><a class="on" href="#">MODELS</a><a href="#">DATA</a><a href="#">SPACES</a><a href="#">PAPERS</a></div>
+    <div class="feed">
+      <div class="rowhead">TRENDING · 24H <span>↑ 18%</span></div>
+      <div class="card">
+        <div class="top">
+          <div class="repo">Qwen3.8-27B <small>/ Qwen</small></div>
+          <div class="badge">text-gen</div>
+        </div>
+        <div class="desc">Dense 27B instruct model · 256K context · strong multilingual reasoning</div>
+        <div class="metrics">
+          <div class="m"><i>↓</i> 2.4M</div>
+          <div class="m"><i>♥</i> 18.6k</div>
+          <div class="bars"><b style="height:6px"></b><b style="height:9px"></b><b style="height:7px"></b><b class="hi" style="height:16px"></b><b style="height:12px"></b><b style="height:20px"></b><b class="hi" style="height:14px"></b></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="top">
+          <div class="repo">FLUX.1-dev <small>/ black-forest-labs</small></div>
+          <div class="badge">text→image</div>
+        </div>
+        <div class="desc">12B rectified-flow transformer · guidance-distilled few-step sampling</div>
+        <div class="metrics">
+          <div class="m"><i>↓</i> 8.1M</div>
+          <div class="m"><i>♥</i> 42.3k</div>
+          <div class="bars"><b style="height:14px"></b><b class="hi" style="height:19px"></b><b style="height:11px"></b><b style="height:8px"></b><b class="hi" style="height:17px"></b><b style="height:10px"></b></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="top">
+          <div class="repo">DeepSeek-R1 <small>/ deepseek-ai</small></div>
+          <div class="badge">reasoning</div>
+        </div>
+        <div class="desc">Large-scale RL reasoning · long chain-of-thought with verifiable outputs</div>
+        <div class="metrics">
+          <div class="m"><i>↓</i> 12.7M</div>
+          <div class="m"><i>♥</i> 51.9k</div>
+          <div class="bars"><b style="height:8px"></b><b style="height:15px"></b><b class="hi" style="height:20px"></b><b style="height:13px"></b><b style="height:9px"></b></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="top">
+          <div class="repo">Kokoro-82M <small>/ hexgrad</small></div>
+          <div class="badge">tts</div>
+        </div>
+        <div class="desc">82M TTS · Apache-2.0 · faster than real-time on one CPU thread</div>
+        <div class="metrics">
+          <div class="m"><i>↓</i> 3.9M</div>
+          <div class="m"><i>♥</i> 9.4k</div>
+          <div class="bars"><b style="height:5px"></b><b style="height:11px"></b><b style="height:7px"></b><b class="hi" style="height:18px"></b><b style="height:12px"></b></div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <div class="on"><span class="ic">▤</span>REPOS</div>
+      <div><span class="ic">✦</span>PAPERS</div>
+      <div><span class="ic">✎</span>BLOG</div>
+      <div><span class="ic">☺</span>ME</div>
+    </nav>
+    <div class="homebar"></div>
+  </div>
+</div>
+</body>
+</html>

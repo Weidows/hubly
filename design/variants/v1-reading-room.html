@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- Hubly design variant 1 / "Reading Room" — calm light reading-first layout, hairline dividers, serif headings -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hubly · Variant 1 — Reading Room</title>
+<style>
+  :root{
+    --bg:#F7F7F4; --surface:#FFFFFF; --ink:#14161A; --muted:#6B7280; --line:#E6E4DE;
+    --accent:#1F4FD8; --chip:#F0EFEA;
+  }
+  *{box-sizing:border-box; -webkit-font-smoothing:antialiased}
+  body{margin:0; background:#E9EAEC; display:flex; align-items:center; justify-content:center;
+       min-height:100vh; font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; padding:32px}
+  .stage{display:flex; flex-direction:column; gap:12px}
+  .caption{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace; color:#4B5563; letter-spacing:.08em; text-transform:uppercase}
+  .phone{width:390px; height:844px; background:var(--bg); border-radius:38px; overflow:hidden;
+         box-shadow:0 24px 60px rgba(0,0,0,.18), 0 0 0 10px #1b1c1f; display:flex; flex-direction:column; position:relative}
+  /* status bar */
+  .status{height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px;
+          font-size:12px; font-weight:600; color:var(--ink)}
+  /* header */
+  header{padding:4px 20px 12px}
+  .brandrow{display:flex; align-items:center; justify-content:space-between}
+  .brand{font:700 21px/1 Georgia,"Times New Roman",serif; letter-spacing:-.02em}
+  .brand span{color:var(--accent)}
+  .avatar{width:30px;height:30px;border-radius:999px;background:var(--chip);border:1px solid var(--line);
+          display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted)}
+  .search{margin-top:14px; height:38px; border:1px solid var(--line); background:var(--surface); border-radius:10px;
+          display:flex; align-items:center; gap:8px; padding:0 12px; color:var(--muted); font-size:14px}
+  /* segmented */
+  .seg{display:flex; gap:20px; padding:12px 20px 0; border-bottom:1px solid var(--line)}
+  .seg a{font-size:14px; font-weight:600; color:var(--muted); text-decoration:none; padding-bottom:10px}
+  .seg a.on{color:var(--ink); border-bottom:2px solid var(--accent)}
+  /* feed */
+  .feed{flex:1; overflow:hidden; padding:4px 20px 0}
+  .card{padding:18px 0; border-bottom:1px solid var(--line)}
+  .org{font-size:12px; color:var(--muted); letter-spacing:.02em}
+  .repo{font:700 17px/1.3 Georgia,"Times New Roman",serif; margin:3px 0 6px}
+  .desc{font-size:13px; line-height:1.5; color:#3F4650; margin-bottom:10px}
+  .meta{display:flex; align-items:center; gap:14px; font-size:12px; color:var(--muted)}
+  .meta .dot{width:3px;height:3px;border-radius:9px;background:#C9C7C1}
+  .tag{font-size:11px; background:var(--chip); color:#4B5563; padding:3px 8px; border-radius:6px}
+  .spacer{margin-left:auto}
+  /* tab bar */
+  nav.tabs{height:78px; border-top:1px solid var(--line); background:var(--surface); display:flex; padding-bottom:14px}
+  nav.tabs div{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+               font-size:11px; color:var(--muted)}
+  nav.tabs div.on{color:var(--accent); font-weight:600}
+  nav.tabs .ic{font-size:17px; line-height:1}
+  .homebar{position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px;
+           border-radius:9px; background:#D3D1CB}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="caption">Variant 1 · Reading Room</div>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>􀙇 ⌁ ▮</span></div>
+    <header>
+      <div class="brandrow">
+        <div class="brand">Hub<span>ly</span></div>
+        <div class="avatar">W</div>
+      </div>
+      <div class="search">⌕ Search models, datasets, papers</div>
+    </header>
+    <div class="seg"><a class="on" href="#">Models</a><a href="#">Datasets</a><a href="#">Spaces</a><a href="#">Papers</a></div>
+    <div class="feed">
+      <div class="card">
+        <div class="org">Qwen</div>
+        <div class="repo">Qwen3.8-27B</div>
+        <div class="desc">Dense 27B instruction-tuned language model with 256K context and strong multilingual reasoning.</div>
+        <div class="meta"><span class="tag">text-generation</span><span class="dot"></span><span>↓ 2.4M</span><span>♡ 18.6k</span><span class="spacer">⋯</span></div>
+      </div>
+      <div class="card">
+        <div class="org">black-forest-labs</div>
+        <div class="repo">FLUX.1-dev</div>
+        <div class="desc">12B rectified-flow transformer for text-to-image, guidance-distilled for few-step sampling.</div>
+        <div class="meta"><span class="tag">text-to-image</span><span class="dot"></span><span>↓ 8.1M</span><span>♡ 42.3k</span><span class="spacer">⋯</span></div>
+      </div>
+      <div class="card">
+        <div class="org">deepseek-ai</div>
+        <div class="repo">DeepSeek-R1</div>
+        <div class="desc">Reasoning model trained with large-scale RL; long chain-of-thought with verifiable answers.</div>
+        <div class="meta"><span class="tag">text-generation</span><span class="dot"></span><span>↓ 12.7M</span><span>♡ 51.9k</span><span class="spacer">⋯</span></div>
+      </div>
+      <div class="card">
+        <div class="org">hexgrad</div>
+        <div class="repo">Kokoro-82M</div>
+        <div class="desc">82M-parameter TTS with Apache-2.0 licence, faster than real-time on a single CPU thread.</div>
+        <div class="meta"><span class="tag">text-to-speech</span><span class="dot"></span><span>↓ 3.9M</span><span>♡ 9.4k</span><span class="spacer">⋯</span></div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <div class="on"><span class="ic">▤</span>Repos</div>
+      <div><span class="ic">✦</span>Papers</div>
+      <div><span class="ic">✎</span>Blog</div>
+      <div><span class="ic">☺</span>Me</div>
+    </nav>
+    <div class="homebar"></div>
+  </div>
+</div>
+</body>
+</html>

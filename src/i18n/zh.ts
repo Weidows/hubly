@@ -1,0 +1,70 @@
+import type { TranslationKey } from './dict';
+
+/** Simplified Chinese. Keys missing here fall back to English at runtime. */
+export const zh: Partial<Record<TranslationKey, string>> = {
+  'app.name': 'Hubly',
+
+  'tab.repos': '仓库',
+  'tab.papers': '论文',
+  'tab.blog': '博客',
+  'tab.saved': '收藏',
+  'tab.me': '我的',
+
+  'repos.models': '模型',
+  'repos.datasets': '数据集',
+  'repos.spaces': '应用',
+  'repos.trending': '热门',
+  'repos.search.placeholder': '搜索模型、数据集、论文',
+
+  'papers.daily': '每日论文',
+  'papers.trending': '热门论文',
+
+  'common.loading': '加载中…',
+  'common.retry': '重试',
+  'common.error': '出错了',
+  'common.empty': '还没有内容',
+  'common.loadMore': '加载更多',
+  'common.cancel': '取消',
+  'common.post': '发布',
+  'common.reply': '回复',
+  'common.save': '收藏',
+  'common.copied': '已复制',
+  'common.downloads': '下载',
+  'common.likes': '点赞',
+  'common.comments': '评论',
+  'common.updated': '更新于',
+
+  'repo.files': '文件',
+  'repo.card': '模型卡',
+  'repo.discussions': '讨论',
+  'repo.collections': '合集',
+  'repo.open': '打开',
+
+  'discussion.open': '进行中',
+  'discussion.closed': '已关闭',
+  'discussion.merged': '已合并',
+  'discussion.new': '发起讨论',
+  'discussion.title': '标题',
+  'discussion.body': '写点什么…',
+  'discussion.empty': '还没有讨论',
+
+  'auth.signIn': '使用 Hugging Face 登录',
+  'auth.signOut': '退出登录',
+  'auth.signedInAs': '已登录：',
+  'auth.device.title': '完成登录',
+  'auth.device.instructions': '打开下面的链接并输入这个验证码：',
+  'auth.device.open': '打开浏览器',
+  'auth.device.copy': '复制验证码',
+  'auth.device.waiting': '等待授权…',
+  'auth.device.cancelled': '已取消登录',
+  'auth.device.expired': '验证码已过期，请重试',
+  'auth.needsLogin': '登录后才能评论或收藏',
+  'auth.scopeNote': 'Hubly 只申请资料、讨论与合集权限，不会把任何数据存在自己的服务器上。',
+
+  'me.notifications': '通知',
+  'me.collections': '我的合集',
+  'me.likes': '我的点赞',
+  'me.settings': '设置',
+  'me.language': '语言',
+  'me.about': '关于',
+};
