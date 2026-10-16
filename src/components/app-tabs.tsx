@@ -1,30 +1,50 @@
+/**
+ * Native tab bar (iOS / Android). Expo Router's native tabs render the platform tab bar, so the
+ * bar looks like part of the OS; the web build uses its own bar in `app-tabs.web.tsx`.
+ */
 import { NativeTabs } from 'expo-router/native-tabs';
-import { useColorScheme } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import { useT } from '@/i18n';
+import { useTheme } from '@/theme';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const t = useT();
+  const { palette } = useTheme();
 
   return (
     <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
+      backgroundColor={palette.surface}
+      indicatorColor={palette.accentSoft}
+      labelStyle={{ selected: { color: palette.ink } }}>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('tab.repos')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
+          sf={{ default: 'square.stack', selected: 'square.stack.fill' }}
+          md={{ default: 'dashboard', selected: 'dashboard' }}
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="papers">
+        <NativeTabs.Trigger.Label>{t('tab.papers')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
+          sf={{ default: 'doc.text', selected: 'doc.text.fill' }}
+          md={{ default: 'article', selected: 'article' }}
+        />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="blog">
+        <NativeTabs.Trigger.Label>{t('tab.blog')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'newspaper', selected: 'newspaper.fill' }}
+          md={{ default: 'feed', selected: 'feed' }}
+        />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="me">
+        <NativeTabs.Trigger.Label>{t('tab.me')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }}
+          md={{ default: 'person', selected: 'person' }}
         />
       </NativeTabs.Trigger>
     </NativeTabs>

@@ -1,115 +1,102 @@
-import {
-  Tabs,
-  TabList,
-  TabTrigger,
-  TabSlot,
-  TabTriggerSlotProps,
-  TabListProps,
-} from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+/**
+ * Web tab bar. The app is mobile-first, so the web build keeps the phone-like bottom bar
+ * (centred, max 560px) instead of a desktop top nav — it previews exactly what a device shows.
+ */
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Tabs, TabList, TabSlot, TabTrigger, type TabTriggerSlotProps } from 'expo-router/ui';
+import { Pressable, StyleSheet, Text, View, type ViewProps } from 'react-native';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useT, type TranslationKey } from '@/i18n';
+import { radius, spacing, type as typeScale, useTheme } from '@/theme';
 
-import { ExternalLink } from './external-link';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+type TabDef = { name: string; href: string; label: TranslationKey; icon: keyof typeof Ionicons.glyphMap };
+
+const TABS: TabDef[] = [
+  { name: 'index', href: '/', label: 'tab.repos', icon: 'albums-outline' },
+  { name: 'papers', href: '/papers', label: 'tab.papers', icon: 'document-text-outline' },
+  { name: 'blog', href: '/blog', label: 'tab.blog', icon: 'newspaper-outline' },
+  { name: 'me', href: '/me', label: 'tab.me', icon: 'person-circle-outline' },
+];
 
 export default function AppTabs() {
   return (
     <Tabs>
-      <TabSlot style={{ height: '100%' }} />
+      <TabSlot style={styles.slot} />
       <TabList asChild>
-        <CustomTabList>
-          <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
-          </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
-          </TabTrigger>
-        </CustomTabList>
+        <TabBar>
+          {TABS.map((tab) => (
+            <TabTrigger key={tab.name} name={tab.name} href={tab.href as never} asChild>
+              <TabButton icon={tab.icon} labelKey={tab.label} />
+            </TabTrigger>
+          ))}
+        </TabBar>
       </TabList>
     </Tabs>
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+function TabBar(props: ViewProps) {
+  const { palette } = useTheme();
   return (
-    <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
-          {children}
-        </ThemedText>
-      </ThemedView>
-    </Pressable>
-  );
-}
-
-export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
-
-  return (
-    <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
-        </ThemedText>
-
+    <View {...props} style={styles.barWrap}>
+      <View style={[styles.bar, { backgroundColor: palette.surface, borderColor: palette.line }]}>
         {props.children}
-
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
-      </ThemedView>
+      </View>
     </View>
   );
 }
 
+function TabButton({
+  icon,
+  labelKey,
+  isFocused,
+  onPress,
+}: TabTriggerSlotProps & { icon: keyof typeof Ionicons.glyphMap; labelKey: TranslationKey }) {
+  const t = useT();
+  const { palette } = useTheme();
+  const color = isFocused ? palette.ink : palette.muted;
+
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.tab, pressed ? styles.pressed : null]}>
+      <View style={[styles.iconWrap, isFocused ? { backgroundColor: palette.accent } : null]}>
+        <Ionicons name={icon} size={16} color={isFocused ? palette.accentInk : color} />
+      </View>
+      <Text style={[typeScale.tiny, { color, fontWeight: isFocused ? '800' : '600' }]}>
+        {t(labelKey)}
+      </Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  tabListContainer: {
+  slot: { height: '100%' },
+  barWrap: {
     position: 'absolute',
+    bottom: 0,
     width: '100%',
-    padding: Spacing.three,
+    padding: spacing.md,
+    alignItems: 'center',
+  },
+  bar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    width: '100%',
+    maxWidth: 560,
+    gap: spacing.sm,
+  },
+  tab: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 2 },
+  iconWrap: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.md,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    minWidth: 34,
   },
-  innerContainer: {
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexGrow: 1,
-    gap: Spacing.two,
-    maxWidth: MaxContentWidth,
-  },
-  brandText: {
-    marginRight: 'auto',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  tabButtonView: {
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
-  },
+  pressed: { opacity: 0.7 },
 });
