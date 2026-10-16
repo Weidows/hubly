@@ -2,20 +2,23 @@
  * Web tab bar. The app is mobile-first, so the web build keeps the phone-like bottom bar
  * (centred, max 560px) instead of a desktop top nav — it previews exactly what a device shows.
  */
-import Ionicons from '@expo/vector-icons/Ionicons';
+import {
+  MaterialDesignIcons,
+  type MaterialDesignIconsIconName,
+} from '@react-native-vector-icons/material-design-icons';
 import { Tabs, TabList, TabSlot, TabTrigger, type TabTriggerSlotProps } from 'expo-router/ui';
 import { Pressable, StyleSheet, Text, View, type ViewProps } from 'react-native';
 
 import { useT, type TranslationKey } from '@/i18n';
 import { radius, spacing, type as typeScale, useTheme } from '@/theme';
 
-type TabDef = { name: string; href: string; label: TranslationKey; icon: keyof typeof Ionicons.glyphMap };
+type TabDef = { name: string; href: string; label: TranslationKey; icon: MaterialDesignIconsIconName };
 
 const TABS: TabDef[] = [
-  { name: 'index', href: '/', label: 'tab.repos', icon: 'albums-outline' },
-  { name: 'papers', href: '/papers', label: 'tab.papers', icon: 'document-text-outline' },
-  { name: 'blog', href: '/blog', label: 'tab.blog', icon: 'newspaper-outline' },
-  { name: 'me', href: '/me', label: 'tab.me', icon: 'person-circle-outline' },
+  { name: 'index', href: '/', label: 'tab.repos', icon: 'view-dashboard-outline' },
+  { name: 'papers', href: '/papers', label: 'tab.papers', icon: 'file-document-outline' },
+  { name: 'blog', href: '/blog', label: 'tab.blog', icon: 'newspaper-variant-outline' },
+  { name: 'me', href: '/me', label: 'tab.me', icon: 'account-circle-outline' },
 ];
 
 export default function AppTabs() {
@@ -51,7 +54,10 @@ function TabButton({
   labelKey,
   isFocused,
   onPress,
-}: TabTriggerSlotProps & { icon: keyof typeof Ionicons.glyphMap; labelKey: TranslationKey }) {
+}: TabTriggerSlotProps & {
+  icon: MaterialDesignIconsIconName;
+  labelKey: TranslationKey;
+}) {
   const t = useT();
   const { palette } = useTheme();
   const color = isFocused ? palette.ink : palette.muted;
@@ -59,7 +65,7 @@ function TabButton({
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.tab, pressed ? styles.pressed : null]}>
       <View style={[styles.iconWrap, isFocused ? { backgroundColor: palette.accent } : null]}>
-        <Ionicons name={icon} size={16} color={isFocused ? palette.accentInk : color} />
+        <MaterialDesignIcons name={icon} size={16} color={isFocused ? palette.accentInk : color} />
       </View>
       <Text style={[typeScale.tiny, { color, fontWeight: isFocused ? '800' : '600' }]}>
         {t(labelKey)}

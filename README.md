@@ -19,13 +19,20 @@ Not affiliated with Hugging Face. There is no backend: every request goes straig
 
 ## Commands
 
+This project uses **bun** (`bun@1.4.3` via scoop). Use `bun`/`bunx`, not `npm`/`npx`.
+
 ```bash
-npm run web        # browser build (fastest loop on Windows)
-npm run android    # Expo Go / emulator
-npm run lint       # expo lint
-npx tsc --noEmit   # typecheck
-npx expo export --platform web   # bundle check
+bun install                      # dependencies (creates bun.lock)
+bun run web                      # browser build (fastest loop on Windows)
+bun run android                  # Expo Go / emulator
+bunx expo lint                   # lint
+bunx tsc --noEmit                # typecheck
+bunx expo export --platform web  # bundle check
+bunx expo-doctor                 # dependency/config diagnosis
 ```
+
+Expo note: `bunx expo install <pkg>` resolves SDK-compatible versions — prefer it over
+`bun add` for anything Expo ships.
 
 ## Environment
 

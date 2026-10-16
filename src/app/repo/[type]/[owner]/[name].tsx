@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState } from 'react';
@@ -41,11 +41,11 @@ export default function RepoDetailScreen() {
     <ScrollView style={{ backgroundColor: palette.bg }} contentContainerStyle={styles.content}>
       <View style={styles.topBar}>
         <Pressable onPress={() => router.back()} hitSlop={10} style={styles.back}>
-          <Ionicons name="chevron-back" size={20} color={palette.ink} />
+          <MaterialDesignIcons name="chevron-left" size={20} color={palette.ink} />
           <Text style={[typeScale.small, { color: palette.ink }]}>{t('tab.repos')}</Text>
         </Pressable>
         <Pressable onPress={() => void WebBrowser.openBrowserAsync(webUrl)} hitSlop={10}>
-          <Ionicons name="open-outline" size={18} color={palette.muted} />
+          <MaterialDesignIcons name="open-in-new" size={18} color={palette.muted} />
         </Pressable>
       </View>
 
@@ -108,8 +108,8 @@ export default function RepoDetailScreen() {
           <View style={styles.fileList}>
             {(files.data ?? []).map((file) => (
               <View key={file.path} style={[styles.fileRow, { borderColor: palette.line }]}>
-                <Ionicons
-                  name={file.type === 'directory' ? 'folder-outline' : 'document-outline'}
+                <MaterialDesignIcons
+                  name={file.type === 'directory' ? 'folder-outline' : 'file-document-outline'}
                   size={15}
                   color={palette.muted}
                 />

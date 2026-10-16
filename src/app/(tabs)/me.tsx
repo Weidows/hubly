@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import * as WebBrowser from 'expo-web-browser';
@@ -140,7 +140,7 @@ export default function MeScreen() {
         <Pressable
           onPress={() => void signOut()}
           style={({ pressed }) => [styles.row, { borderColor: palette.line, opacity: pressed ? 0.7 : 1 }]}>
-          <Ionicons name="log-out-outline" size={16} color={palette.danger} />
+          <MaterialDesignIcons name="logout" size={16} color={palette.danger} />
           <Text style={[typeScale.small, { color: palette.danger }]}>{t('auth.signOut')}</Text>
         </Pressable>
       ) : null}
