@@ -10,7 +10,7 @@ Not affiliated with Hugging Face. There is no backend: every request goes straig
 
 | Piece | Choice | Why |
 | --- | --- | --- |
-| Framework | Expo SDK 58 / React Native 0.88 | one codebase for iOS, Android and web |
+| Framework | Expo SDK 57 / React Native 0.86 | **SDK 57, not 58**: Expo Go on Google Play is still 57, so a 58 project cannot be opened on a phone. Same one-codebase story for iOS, Android and web |
 | Routing | Expo Router | tabs in `src/app/(tabs)`, detail screens pushed on the root stack |
 | Data | `@tanstack/react-query` | caching + retry that respects HF rate limits |
 | Auth | Hugging Face OAuth **device code** flow | works in Expo Go, on Android and on web with no redirect URI |
@@ -38,11 +38,44 @@ Expo note: `bunx expo install <pkg>` resolves SDK-compatible versions — prefer
 
 Copy `.env.example` to `.env` and fill in what you have:
 
-- `EXPO_PUBLIC_HF_CLIENT_ID` — client id of the Hubly OAuth app (a **public app**, no secret).
-  Create it at <https://huggingface.co/settings/applications/new> with scopes
-  `openid`, `profile`, `write-discussions`, `write-collections`. No redirect URI is needed.
+- `EXPO_PUBLIC_HF_CLIENT_ID` — client id of the Hubly OAuth app (a **public app**, no secret; the id
+  is committed in `.env.example` because it ships inside the binary anyway). Create/manage it at
+  <https://huggingface.co/settings/applications/new> with scopes
+  `openid`, `profile`, `write-discussions`, `write-collections`.
 - `EXPO_PUBLIC_HF_ENDPOINT` — optional API host override (defaults to `https://huggingface.co`).
-  Users behind a wall can point it at a mirror or a self-hosted reverse proxy.
+  Users behind a wall can point it at a mirror or a self-hosted reverse proxy. An **empty** value
+  is ignored (it used to make every request relative and hit the dev server itself).
+
+### Sign-in: two flows, chosen per platform
+
+Hugging Face's OAuth endpoints are not uniformly CORS-friendly, so the app cannot use one flow
+everywhere (verified against the live server):
+
+| Endpoint | CORS | Consequence |
+| --- | --- | --- |
+| `POST /oauth/device` | **none** (no `Access-Control-Allow-Origin`, preflight included) | browsers are blocked → the **web** build cannot use the device flow |
+| `POST /oauth/token` | `Access-Control-Allow-Origin: *` | browsers can exchange a code themselves |
+| `GET /oauth/authorize` | n/a — it is a page navigation | works in a browser |
+
+- **Native (iOS / Android / Expo Go)** → device code: no redirect URI to register, and no CORS in
+  React Native. `POST /oauth/device` returns `device_code`, `user_code`, `verification_uri` and
+  `expires_in: 300` with **no** `interval` field; an unapproved poll answers
+  `400 {"error":"authorization_pending"}`.
+- **Web** → authorization code + PKCE: `startWebSignIn()` navigates to `/oauth/authorize`, the
+  `/auth/callback` route exchanges the code at `/oauth/token`. **This requires the redirect URI to
+  be registered on the OAuth app**, otherwise HF answers
+  `400 Invalid redirect_uri, must be one of the registered redirect_uris for this client_id`.
+  Loopback is special-cased (RFC 8252 §7.3) so any port is accepted, but `localhost` and
+  `127.0.0.1` are matched **individually** — register both:
+
+  ```
+  http://localhost/auth/callback
+  http://127.0.0.1/auth/callback
+  https://<your-production-origin>/auth/callback   # exact match, added at release time
+  ```
+
+Either way the token stays on the device: no backend, every request goes straight to
+`huggingface.co`.
 
 ## API notes worth knowing before touching `src/api/`
 
