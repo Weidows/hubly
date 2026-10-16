@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "huggingface-app",
-    "slug": "huggingface-app",
+    "name": "Hubly",
+    "slug": "hubly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "huggingfaceapp",
+    "scheme": "hubly",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
