@@ -8,8 +8,15 @@
  * - huggingface.co is unreachable from mainland China without a proxy, hence the override below.
  */
 
+/**
+ * API host. `EXPO_PUBLIC_HF_ENDPOINT` is optional; an *empty* value in .env must fall back to the
+ * public Hub, which is why this checks for a non-empty string instead of using `??` — an empty
+ * string would otherwise make every request relative and hit the dev server itself.
+ */
+const configuredEndpoint = process.env.EXPO_PUBLIC_HF_ENDPOINT?.trim();
+
 export const HF_BASE = (
-  process.env.EXPO_PUBLIC_HF_ENDPOINT ?? 'https://huggingface.co'
+  configuredEndpoint && configuredEndpoint.length > 0 ? configuredEndpoint : 'https://huggingface.co'
 ).replace(/\/+$/, '');
 
 /** Base of the HF OAuth server (same host as the Hub). */

@@ -2,6 +2,7 @@ import Markdown from '@ronradtke/react-native-markdown-display';
 import { useMemo } from 'react';
 import { Linking, StyleSheet, View, type ViewStyle } from 'react-native';
 
+import { softWrapLongTokens } from '@/lib/soft-wrap';
 import { font, spacing, type as typeScale, useTheme } from '@/theme';
 
 /**
@@ -11,6 +12,7 @@ import { font, spacing, type as typeScale, useTheme } from '@/theme';
  */
 export function MarkdownBlock({ children }: { children: string }) {
   const { palette } = useTheme();
+  const wrapped = useMemo(() => softWrapLongTokens(children), [children]);
 
   const rules = useMemo(() => {
     const base = typeScale.body;
@@ -68,13 +70,13 @@ export function MarkdownBlock({ children }: { children: string }) {
           return false;
         }}
       >
-        {children}
+        {wrapped}
       </Markdown>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { paddingBottom: spacing.xl },
-  loading: { paddingVertical: spacing.xl, alignItems: 'center' },
+  // A markdown block must never widen its parent: clip anything the renderer cannot wrap.
+  wrap: { paddingBottom: spacing.xl, width: '100%', maxWidth: '100%', flexShrink: 1, overflow: 'hidden' },
 });

@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { RepoType } from '@/api/types';
 import { MarkdownBlock } from '@/components/markdown';
+import { SaveToCollection } from '@/components/save-to-collection';
 import { Chip, Divider, EmptyState, ErrorState, Loading, Segmented, Stat } from '@/components/ui';
 import { useDiscussions, useRepoDetail, useRepoFiles, useRepoReadme } from '@/hooks/queries';
 import { useT } from '@/i18n';
@@ -28,6 +29,7 @@ export default function RepoDetailScreen() {
   const type = (params.type as RepoType) ?? 'model';
   const repoId = `${params.owner}/${params.name}`;
   const [tab, setTab] = useState<Tab>('card');
+  const [saveOpen, setSaveOpen] = useState(false);
 
   const info = useRepoDetail(type, repoId);
   const readme = useRepoReadme(type, repoId);
@@ -43,6 +45,13 @@ export default function RepoDetailScreen() {
         <Pressable onPress={() => router.back()} hitSlop={10} style={styles.back}>
           <MaterialDesignIcons name="chevron-left" size={20} color={palette.ink} />
           <Text style={[typeScale.small, { color: palette.ink }]}>{t('tab.repos')}</Text>
+        </Pressable>
+        <Pressable onPress={() => setSaveOpen(true)} hitSlop={10}>
+          <MaterialDesignIcons
+            name="bookmark-plus-outline"
+            size={18}
+            color={palette.ink}
+          />
         </Pressable>
         <Pressable onPress={() => void WebBrowser.openBrowserAsync(webUrl)} hitSlop={10}>
           <MaterialDesignIcons name="open-in-new" size={18} color={palette.muted} />
@@ -137,7 +146,12 @@ export default function RepoDetailScreen() {
             {(discussions.data ?? []).map((discussion) => (
               <Pressable
                 key={discussion.num}
-                onPress={() => void WebBrowser.openBrowserAsync(`${webUrl}/discussions/${discussion.num}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: '/discussion/[type]/[owner]/[name]/[num]',
+                    params: { type, owner: params.owner, name: params.name, num: String(discussion.num) },
+                  })
+                }
                 style={({ pressed }) => [
                   styles.discussionRow,
                   { borderColor: palette.line, opacity: pressed ? 0.8 : 1 },
@@ -168,6 +182,13 @@ export default function RepoDetailScreen() {
           </View>
         )
       ) : null}
+
+      <SaveToCollection
+        visible={saveOpen}
+        onClose={() => setSaveOpen(false)}
+        repoType={type}
+        repoId={repoId}
+      />
     </ScrollView>
   );
 }

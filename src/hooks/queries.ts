@@ -4,7 +4,12 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { listBlogs } from '@/api/blog';
 import { dailyPapers, listPapers } from '@/api/papers';
 import { repoFiles, repoInfo, repoReadme } from '@/api/repos';
-import { listDiscussions } from '@/api/social';
+import {
+  discussionDetail,
+  listCollections,
+  listDiscussions,
+  listNotifications,
+} from '@/api/social';
 import type { RepoType } from '@/api/types';
 import { listRepos } from '@/api/repos';
 
@@ -54,6 +59,34 @@ export function useDiscussions(type: RepoType, repoId: string) {
     queryKey: ['discussions', type, repoId],
     queryFn: () => listDiscussions(type, repoId),
     enabled: Boolean(repoId),
+  });
+}
+
+export function useDiscussionDetail(type: RepoType, repoId: string, num: number) {
+  return useQuery({
+    queryKey: ['discussion', type, repoId, num],
+    queryFn: () => discussionDetail(type, repoId, num),
+    enabled: Boolean(repoId) && Number.isFinite(num),
+  });
+}
+
+/** Collections owned by a user/org. Without a namespace HF returns the public browse feed. */
+export function useCollections(owner?: string) {
+  return useQuery({
+    queryKey: ['collections', owner ?? 'public'],
+    queryFn: () => listCollections(owner ? { owner, limit: 50 } : { limit: 50 }),
+  });
+}
+
+/** Notifications. Only meaningful when signed in — pass `enabled`. */
+export function useNotifications(enabled: boolean) {
+  return useQuery({
+    queryKey: ['notifications'],
+    queryFn: async () => {
+      const res = await listNotifications();
+      return Array.isArray(res) ? res : (res.notifications ?? []);
+    },
+    enabled,
   });
 }
 
