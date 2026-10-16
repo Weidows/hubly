@@ -60,6 +60,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="repo/[type]/[owner]/[name]" />
                 <Stack.Screen name="discussion/[type]/[owner]/[name]/[num]" />
+                <Stack.Screen name="auth/callback" />
               </Stack>
             ) : (
               <View style={{ flex: 1, backgroundColor: palette.bg }} />

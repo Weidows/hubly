@@ -1,22 +1,25 @@
 /**
- * Hugging Face "Device code" OAuth — no redirect URI, no client secret.
+ * Hugging Face "Device code" OAuth — the native flow (iOS / Android / Expo Go).
  *
- * Why this flow: the app must sign in on iOS, Android, Expo Go and the web build. An
- * authorization-code + deep-link flow cannot work in Expo Go (the `exp://` redirect carries a
- * changing host, and HF requires custom schemes to match exactly), while device code needs
- * nothing but a client id.
+ * Why device code on native: it needs no redirect URI, so it works in Expo Go (where an
+ * authorization-code flow would require a `exp://` redirect that HF cannot match exactly).
+ * Note it is **web-incompatible**: `POST /oauth/device` sends no CORS headers, so browsers are
+ * blocked from calling it at all — see `pkce.ts` for the web flow.
  *
- * Endpoints and field names come from the official guide (huggingface.co/docs/hub/oauth):
- *   POST /oauth/device  {client_id}          -> device_code, user_code, verification_uri, interval, expires_in
- *   POST /oauth/token   grant_type=urn:ietf:params:oauth:grant-type:device_code
- *                       device_code=…&client_id=…
- *
- * The client id is public (a "public app" has no secret) and is injected at build time.
+ * Verified against the live server (2026-10): the start response carries
+ * `device_code`, `user_code`, `verification_uri` and `expires_in: 300`, and has **no** `interval`
+ * field; an unapproved poll returns HTTP 400 `{"error":"authorization_pending"}`.
  */
 import { HF_OAUTH_BASE } from '@/api/client';
 
-/** Client id of the Hubly OAuth app. Set EXPO_PUBLIC_HF_CLIENT_ID in .env. */
-export const HF_CLIENT_ID = process.env.EXPO_PUBLIC_HF_CLIENT_ID ?? '';
+import {
+  assertClientId,
+  formUrlEncode,
+  HF_CLIENT_ID,
+  OAuthError,
+  toOAuthError,
+  type DeviceTokens,
+} from './oauth';
 
 export type DeviceAuthorization = {
   deviceCode: string;
@@ -27,41 +30,20 @@ export type DeviceAuthorization = {
   expiresInSec: number;
 };
 
-export type DeviceTokens = {
-  accessToken: string;
-  tokenType: string;
-  expiresInSec?: number;
-  scope?: string;
-  idToken?: string;
-};
-
-export class DeviceFlowError extends Error {
-  constructor(
-    message: string,
-    readonly code: 'expired_token' | 'access_denied' | 'network' | 'unknown',
-  ) {
-    super(message);
-    this.name = 'DeviceFlowError';
-  }
-}
-
-function form(data: Record<string, string>) {
-  return new URLSearchParams(data).toString();
-}
-
 export async function startDeviceFlow(clientId = HF_CLIENT_ID): Promise<DeviceAuthorization> {
-  if (!clientId) {
-    throw new DeviceFlowError(
-      'Missing EXPO_PUBLIC_HF_CLIENT_ID — create a public OAuth app at https://huggingface.co/settings/applications/new',
-      'unknown',
-    );
+  assertClientId();
+  let res: Response;
+  try {
+    res = await fetch(`${HF_OAUTH_BASE}/oauth/device`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formUrlEncode({ client_id: clientId }),
+    });
+  } catch (error) {
+    throw toOAuthError(error);
   }
-  const res = await fetch(`${HF_OAUTH_BASE}/oauth/device`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: form({ client_id: clientId }),
-  });
-  if (!res.ok) throw new DeviceFlowError(`Device flow start failed (${res.status})`, 'unknown');
+
+  if (!res.ok) throw new OAuthError(`Device flow start failed (${res.status})`, 'unknown');
   const json = (await res.json()) as {
     device_code: string;
     user_code: string;
@@ -76,7 +58,7 @@ export async function startDeviceFlow(clientId = HF_CLIENT_ID): Promise<DeviceAu
     verificationUri: json.verification_uri,
     verificationUriComplete: json.verification_uri_complete,
     intervalMs: (json.interval ?? 5) * 1000,
-    expiresInSec: json.expires_in ?? 900,
+    expiresInSec: json.expires_in ?? 300,
   };
 }
 
@@ -87,7 +69,7 @@ function sleep(ms: number, signal?: AbortSignal) {
       'abort',
       () => {
         clearTimeout(timer);
-        reject(new DeviceFlowError('cancelled', 'access_denied'));
+        reject(new OAuthError('cancelled', 'access_denied'));
       },
       { once: true },
     );
@@ -111,15 +93,25 @@ export async function pollDeviceToken(options: {
 
   while (Date.now() < deadline) {
     await sleep(interval, options.signal);
-    const res = await fetch(`${HF_OAUTH_BASE}/oauth/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: form({
-        grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
-        device_code: options.deviceCode,
-        client_id: clientId,
-      }),
-    });
+
+    let res: Response;
+    try {
+      res = await fetch(`${HF_OAUTH_BASE}/oauth/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formUrlEncode({
+          grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+          device_code: options.deviceCode,
+          client_id: clientId,
+        }),
+      });
+    } catch (error) {
+      // A single network hiccup should not kill a 5-minute sign-in: keep polling, but surface it
+      // if the deadline passes.
+      await sleep(1000, options.signal).catch(() => undefined);
+      if (Date.now() >= deadline) throw toOAuthError(error);
+      continue;
+    }
 
     if (res.ok) {
       const json = (await res.json()) as {
@@ -146,12 +138,12 @@ export async function pollDeviceToken(options: {
         interval += 5000;
         break;
       case 'access_denied':
-        throw new DeviceFlowError(body.error_description ?? 'Access denied', 'access_denied');
+        throw new OAuthError(body.error_description ?? 'Access denied', 'access_denied');
       case 'expired_token':
-        throw new DeviceFlowError('This code expired — start again', 'expired_token');
+        throw new OAuthError('This code expired — start again', 'expired_token');
       default:
-        throw new DeviceFlowError(body.error_description ?? `Token request failed (${res.status})`, 'unknown');
+        throw new OAuthError(body.error_description ?? `Token request failed (${res.status})`, 'unknown');
     }
   }
-  throw new DeviceFlowError('This code expired — start again', 'expired_token');
+  throw new OAuthError('This code expired — start again', 'expired_token');
 }

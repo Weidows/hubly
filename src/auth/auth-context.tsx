@@ -1,19 +1,21 @@
 /**
- * Auth state for the whole app: device-code sign-in, token persistence, and the current user.
+ * Auth state for the whole app: sign-in per platform, token persistence, and the current user.
  * The token never leaves the device — every request goes straight from the app to huggingface.co.
+ *
+ * Flow per platform (see `oauth.ts` for why):
+ *  - native  → device code (`startDeviceFlow` + polling), works in Expo Go
+ *  - web     → authorization code + PKCE (`startWebSignIn`), because /oauth/device has no CORS
  */
+import { Platform } from 'react-native';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { setAuthToken } from '@/api/client';
 import { whoAmI } from '@/api/social';
 import type { User } from '@/api/types';
 
-import {
-  DeviceFlowError,
-  pollDeviceToken,
-  startDeviceFlow,
-  type DeviceAuthorization,
-} from './device-flow';
+import { pollDeviceToken, startDeviceFlow, type DeviceAuthorization } from './device-flow';
+import { OAuthError, toOAuthError, type OAuthErrorCode } from './oauth';
+import { startWebSignIn } from './pkce';
 import { getItem, removeItem, setItem } from './storage';
 
 const TOKEN_KEY = 'hubly.hf.token';
@@ -25,15 +27,19 @@ export type PendingDevice = Pick<
   'userCode' | 'verificationUri' | 'verificationUriComplete'
 >;
 
+export type AuthError = { code: OAuthErrorCode; message: string };
+
 export type AuthContextValue = {
   status: AuthStatus;
   user: User | null;
-  /** Non-null while a device-code sign-in is waiting for approval. */
+  /** Non-null while a device-code sign-in is waiting for approval (native only). */
   pending: PendingDevice | null;
-  error: string | null;
+  error: AuthError | null;
   signIn: () => Promise<void>;
   cancelSignIn: () => void;
   signOut: () => Promise<void>;
+  /** Used by the web PKCE callback route once it has exchanged the code for a token. */
+  acceptToken: (accessToken: string) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -48,8 +54,16 @@ export function useAuthState(): AuthContextValue {
   const [status, setStatus] = useState<AuthStatus>('loading');
   const [user, setUser] = useState<User | null>(null);
   const [pending, setPending] = useState<PendingDevice | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  const applySession = useCallback(async (accessToken: string) => {
+    setAuthToken(accessToken);
+    await setItem(TOKEN_KEY, accessToken);
+    const me = await whoAmI();
+    setUser(me);
+    setStatus('signedIn');
+  }, []);
 
   // Restore a stored token on startup and check who it belongs to.
   useEffect(() => {
@@ -86,8 +100,33 @@ export function useAuthState(): AuthContextValue {
     setError(null);
   }, []);
 
+  const acceptToken = useCallback(
+    async (accessToken: string) => {
+      try {
+        await applySession(accessToken);
+      } catch (err) {
+        const oauth = toOAuthError(err);
+        setError({ code: oauth.code, message: oauth.message });
+        setStatus('anonymous');
+      }
+    },
+    [applySession],
+  );
+
   const signIn = useCallback(async () => {
     setError(null);
+
+    // Web: full-page redirect to /oauth/authorize; the /auth/callback route finishes the job.
+    if (Platform.OS === 'web') {
+      try {
+        await startWebSignIn();
+      } catch (err) {
+        const oauth = toOAuthError(err);
+        setError({ code: oauth.code, message: oauth.message });
+      }
+      return;
+    }
+
     const controller = new AbortController();
     abortRef.current = controller;
     try {
@@ -105,24 +144,19 @@ export function useAuthState(): AuthContextValue {
         signal: controller.signal,
       });
 
-      setAuthToken(tokens.accessToken);
-      await setItem(TOKEN_KEY, tokens.accessToken);
-      const me = await whoAmI();
-      setUser(me);
-      setStatus('signedIn');
+      await applySession(tokens.accessToken);
     } catch (err) {
-      if (err instanceof DeviceFlowError && err.code === 'access_denied') {
+      const oauth = err instanceof OAuthError ? err : toOAuthError(err);
+      if (oauth.code === 'access_denied') {
         setError(null); // user cancelled on purpose: not an error banner
-      } else if (err instanceof DeviceFlowError && err.code === 'expired_token') {
-        setError('expired');
       } else {
-        setError(err instanceof Error ? err.message : 'unknown');
+        setError({ code: oauth.code, message: oauth.message });
       }
     } finally {
       abortRef.current = null;
       setPending(null);
     }
-  }, []);
+  }, [applySession]);
 
   const signOut = useCallback(async () => {
     cancelSignIn();
@@ -133,7 +167,7 @@ export function useAuthState(): AuthContextValue {
   }, [cancelSignIn]);
 
   return useMemo(
-    () => ({ status, user, pending, error, signIn, cancelSignIn, signOut }),
-    [status, user, pending, error, signIn, cancelSignIn, signOut],
+    () => ({ status, user, pending, error, signIn, cancelSignIn, signOut, acceptToken }),
+    [status, user, pending, error, signIn, cancelSignIn, signOut, acceptToken],
   );
 }

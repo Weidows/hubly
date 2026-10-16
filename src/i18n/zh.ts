@@ -59,6 +59,13 @@ export const zh: Partial<Record<TranslationKey, string>> = {
   'auth.device.cancelled': '已取消登录',
   'auth.device.expired': '验证码已过期，请重试',
   'auth.needsLogin': '登录后才能评论或收藏',
+  'auth.signingIn': '正在登录…',
+  'auth.error.network': '无法连接 huggingface.co —— 请检查本机/手机的代理后重试。',
+  'auth.error.expired': '验证码已过期，请重新登录。',
+  'auth.error.stateMismatch': '登录会话不匹配，请重试。',
+  'auth.error.generic': '登录失败。',
+  'auth.web.note':
+    'Web 端登录会在这个标签页里跳转到 huggingface.co，所以浏览器本身要能访问它。另外 OAuth 应用里必须登记这个回调地址：{uri}',
   'auth.scopeNote': 'Hubly 只申请资料、讨论与合集权限，不会把任何数据存在自己的服务器上。',
 
   'me.notifications': '通知',

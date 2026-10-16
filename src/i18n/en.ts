@@ -61,6 +61,14 @@ export const en = {
   'auth.device.cancelled': 'Sign-in cancelled',
   'auth.device.expired': 'Code expired — try again',
   'auth.needsLogin': 'Sign in to comment or save',
+  'auth.signingIn': 'Signing you in…',
+  'auth.error.network':
+    'Cannot reach huggingface.co — check this device’s network or proxy, then try again.',
+  'auth.error.expired': 'That code expired — start again.',
+  'auth.error.stateMismatch': 'The sign-in session did not match — please retry.',
+  'auth.error.generic': 'Sign-in failed.',
+  'auth.web.note':
+    'On the web build, sign-in opens huggingface.co in this tab, so the browser itself must reach it. The OAuth app must also list this redirect URI: {uri}',
   'auth.scopeNote':
     'Hubly asks only for profile, discussions and collections access. Nothing is stored on a server.',
 

@@ -1,8 +1,10 @@
 /**
  * Native tab bar (iOS / Android). Expo Router's native tabs render the platform tab bar, so the
  * bar looks like part of the OS; the web build uses its own bar in `app-tabs.web.tsx`.
+ * Import path note: SDK 57 exposes this as `expo-router/unstable-native-tabs`; SDK 58 renamed it
+ * to `expo-router/native-tabs`. Icon props stay as plain `sf`/`md` strings, which work on both.
  */
-import { NativeTabs } from 'expo-router/native-tabs';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
 import { useT } from '@/i18n';
 import { useTheme } from '@/theme';

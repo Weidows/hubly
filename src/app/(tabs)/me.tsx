@@ -3,9 +3,10 @@ import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-context';
+import { webRedirectUri } from '@/auth/pkce';
 import { getItem, setItem } from '@/auth/storage';
 import { Loading } from '@/components/ui';
 import { getLocale, localeStorageKey, setLocale, useT, type Locale } from '@/i18n';
@@ -122,7 +123,19 @@ export default function MeScreen() {
 
       {error ? (
         <Text style={[typeScale.small, { color: palette.danger }]}>
-          {error === 'expired' ? t('auth.device.expired') : error}
+          {error.code === 'network'
+            ? t('auth.error.network')
+            : error.code === 'expired_token'
+              ? t('auth.error.expired')
+              : error.code === 'state_mismatch'
+                ? t('auth.error.stateMismatch')
+                : `${t('auth.error.generic')} (${error.message})`}
+        </Text>
+      ) : null}
+
+      {Platform.OS === 'web' && !user ? (
+        <Text style={[typeScale.tiny, { color: palette.muted }]}>
+          {t('auth.web.note', { uri: webRedirectUri() })}
         </Text>
       ) : null}
 
